@@ -36,17 +36,13 @@ imagesData = ((imagesData) => {
 
 })(imagesData);
 
-
+/*
+单个图片组件
+*/
 class ImageFigure extends React.Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      figureClassName: 'img-figure',
-      imgBackClassName: 'img-back'
-    };
-
 
     /*用箭头函数绑定this为当前组件*/
     this.handleClick = (e) => {
@@ -65,8 +61,7 @@ class ImageFigure extends React.Component {
 
   render() {
 
-    let styleObj = this.props.info.pos,
-        imgBackClassName = 'img-back';//img-back的类名
+    let styleObj = this.props.info.pos;
 
     /*为每个figure的样式中的transform属性添加浏览器厂商前缀*/
     ['','Webkit','Moz','ms','O'].forEach((item) => {
@@ -81,16 +76,11 @@ class ImageFigure extends React.Component {
     /*如果isInverse为true，则翻转图片*/
     if(this.props.info.isInverse){
       ['','Webkit','Moz','ms','O'].forEach((item) => {
-        styleObj[item + 'Transform'] = styleObj[item + 'Transform'] + 'translateX(320px) rotateY(180deg)';
+        styleObj[item + 'Transform'] = styleObj[item + 'Transform'] + ' translateX(320px) rotateY(180deg)';
       });
-
-      imgBackClassName = 'img-back img-inverse';
-
     }else{
 
     }
-
-
 
     return (
       <figure className = 'img-figure' onClick = {this.handleClick} style = {styleObj}>
@@ -110,11 +100,49 @@ class ImageFigure extends React.Component {
   }
 }
 
+/*
+控制单元组件
+*/
+class ControllerUnit extends React.Component{
+  constructor(props){
+    super(props);
+
+    this.handleClick = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      if(this.props.info.isCenter){//如果对应的图片居中，则翻转
+        this.props.inverse();
+      }else{
+        this.props.rearrange();//如果对应的图片不居中，则将对应的图片居中，其他图片重新排布
+      }
+    }
+
+
+  }
 
 
 
+  render(){
+    let controllerUnitClassName = 'controller-unit';
+
+    if(this.props.info.isCenter){
+      controllerUnitClassName = 'controller-unit is-center';
+      if(this.props.info.isInverse){
+        controllerUnitClassName = 'controller-unit is-center is-inverse';
+      }
+    }
+
+    return(<span className = {controllerUnitClassName} onClick = {this.handleClick} ></span>);
 
 
+  }
+}
+
+
+/*
+画廊组件
+*/
 class AppComponent extends React.Component {
 
   constructor(props) {
@@ -211,6 +239,8 @@ class AppComponent extends React.Component {
         isCenter: false
       })
     }
+
+
 
     /*随机分布图片*/
     imgsInfo = shuffle(imgsInfo);
@@ -315,13 +345,26 @@ class AppComponent extends React.Component {
       }
 
       imageFigures.push(<ImageFigure
-        index = {index}
+        key = {index}
         info = {this.state.imgsInfo[index]}
         data = {item}
         inverse = {this.inverse(index)}
         rearrange = {this.rearrangeOut(index)}
-        ref = {(imageFigure) => {this.imageFigures[index] = imageFigure}}/>)
+        ref = {(imageFigure) => {this.imageFigures[index] = imageFigure}}/>);
+
+      controllerUnits.push(<ControllerUnit
+        key = {index}
+        info = {this.state.imgsInfo[index]}
+        rearrange = {this.rearrangeOut(index)}
+        inverse = {this.inverse(index)}
+
+
+        />);
+
+
     });
+
+
 
 
 

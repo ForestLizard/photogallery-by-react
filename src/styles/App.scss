@@ -1,4 +1,14 @@
 /* Base Application Styles */
+
+@font-face {font-family: "iconfont";
+  src: url('../fonts/icons/iconfont.eot'); /* IE9*/
+  src: url('../fonts/icons/iconfont.eot#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('../fonts/icons/iconfont.woff') format('woff'), /* chrome, firefox */
+  url('../fonts/icons/iconfont.ttf') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+  url('../fonts/icons/iconfont.svg#iconfont') format('svg'); /* iOS 4.1- */
+}
+
+
 html,body{
   /*position: absolute;*/
   width: 100%;
@@ -70,18 +80,14 @@ html,body{
       color: #9a9a9a;
       background-color: #fff;
       text-align: center;
-      transform: rotateY(180deg) ;
+      transform: rotateY(180deg) translateZ(1px);
       backface-visibility: hidden;
 
 
     }
 
 
-
   }
-
-
-
 
 
 }
@@ -91,10 +97,45 @@ html,body{
 /*nav-control start*/
 .nav-control{
   position: absolute;
-  bottom: 30px;
+  bottom: 50px;
   /*left: 0*/
   z-index: 101;
   width: 100%;
   text-align: center;
+
+  @at-root.controller-unit{
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    margin: 0 10px;
+    border-radius: 15px;
+    background-color: #aaa;
+    transform: scale(0.5);
+    vertical-align: middle;
+    transition: 0.6s 0s;
+
+    cursor: pointer;
+
+    &.is-center{
+      background-color: #888;
+      transform:scale(1);
+
+      &.is-inverse{
+        transform: rotateY(180deg);
+      }
+
+
+      &::after{
+        content: '\e641';
+        color: #fff;
+        font-size: 1.4em;
+        font-family: "iconfont" !important;
+        -webkit-font-smoothing: antialiased;
+        -webkit-text-stroke-width: 0.2px;
+        -moz-osx-font-smoothing: grayscale;
+        line-height: 30px;
+      }
+    }
+  }
 }
 /*nav-control end*/

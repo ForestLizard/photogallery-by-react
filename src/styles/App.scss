@@ -9,11 +9,12 @@
 }
 
 
+
 html,body{
   /*position: absolute;*/
   width: 100%;
   height: 100%;
-  background-color: #222;
+  background-color: #fff;
 
 }
 
@@ -27,19 +28,41 @@ html,body{
   position: relative;
   width: 100%;
   height: 100%;/*视频中为680px*/
+  overflow: hidden;
+  perspective: 1800px;
 }
 
 /*stage end*/
+
+/*tilte start*/
+.title{
+  position: absolute;
+  width: 500px;
+  top: 50px;
+  left: 50%;
+  margin-left: -250px;
+  h1{
+    text-align: center;
+    font-family:'HeitiSCb367196ab18ea6';
+    color: #555555;
+  }
+}
+/*title end*/
+
 
 /*images start*/
 .img-sec{
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: hidden;
-  background-color: #fff4c2;/*视频中为ddd*/
-  perspective: 1800px;
-  /*perspective-origin: 50% 0;*/
+  overflow: visible;
+  box-shadow: 0 20px 30px rgba(0,0,0,0.5),0 0 50px rgba(0,0,0,0.2) inset;
+  background-color: #ddd;
+  background: url('../images/bg.jpg');
+  background-size: cover;
+  transform-style: preserve-3d;
+  transform-origin: 50% 100% 0;
+  transform: translateY(-150px) rotateX(50deg);
 
   @at-root .img-figure{
     position: absolute;
@@ -49,6 +72,7 @@ html,body{
     padding: 40px;
     background-color: #fff;
     box-sizing: border-box;
+    box-shadow: 16px 16px 5px rgba(0,0,0,0.5);
     z-index: 1;
     transform-style: preserve-3d;
     transform-origin: 0 50% 0;
@@ -139,3 +163,15 @@ html,body{
   }
 }
 /*nav-control end*/
+
+/*img-active start*/
+.img-active{
+  z-index: 102;
+  box-shadow: none;
+  }
+.animated{
+  animation-fill-mode: none;
+}
+/*img-active end*/
+
+

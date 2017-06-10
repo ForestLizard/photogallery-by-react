@@ -1,5 +1,7 @@
 require('normalize.css/normalize.css');
-require('styles/App.scss');
+require('animate.css/animate.min.css');
+require('styles/App.scss');//自己写的样式优先级最高
+
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -44,7 +46,7 @@ class ImageFigure extends React.Component {
   constructor(props) {
     super(props);
 
-    /*用箭头函数绑定this为当前组件*/
+    /*添加鼠标点击事件处理函数,用箭头函数绑定this为当前组件*/
     this.handleClick = (e) => {
       e.stopPropagation();
       e.preventDefault();
@@ -55,13 +57,35 @@ class ImageFigure extends React.Component {
       }else{ //如果组件图片不居中，则将选中的图片居中，其余图片重新布局
         this.props.rearrange();
       }
+    };
+
+    /*添加鼠标移入事件处理函数,用箭头函数绑定this为当前组件*/
+    this.handleMouseEnter = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+
+      if(this.props.info.isCenter){
+        this.props.active();
+      }
+
+    };
+
+    /*添加鼠标移出事件处理函数,用箭头函数绑定this为当前组件*/
+    this.handleMouseLeave = (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      if(this.props.info.isCenter){
+        this.props.cancelActive();
+      }
     }
+
   }
 
 
   render() {
 
-    let styleObj = this.props.info.pos;
+    let styleObj = this.props.info.pos,
+        figureClassName = 'img-figure';
 
     /*为每个figure的样式中的transform属性添加浏览器厂商前缀*/
     ['','Webkit','Moz','ms','O'].forEach((item) => {
@@ -71,19 +95,33 @@ class ImageFigure extends React.Component {
     /*居中图片位于第二层*/
     if(this.props.info.isCenter){
       styleObj.zIndex = 11;
-    }
-
-    /*如果isInverse为true，则翻转图片*/
-    if(this.props.info.isInverse){
-      ['','Webkit','Moz','ms','O'].forEach((item) => {
-        styleObj[item + 'Transform'] = styleObj[item + 'Transform'] + ' translateX(320px) rotateY(180deg)';
-      });
-    }else{
 
     }
+
+    if(this.props.info.isActive){
+      if(this.props.present){//如果图片激活，且有present，则该为图片增加一个类名img-active并添加入场动画
+        figureClassName += ' img-active animated zoomInUp';
+        styleObj.opacity = 1;
+
+        if(this.props.info.isInverse){//如果isInverse为true，则翻转图片
+          ['','Webkit','Moz','ms','O'].forEach((item) => {
+            styleObj[item + 'TransformOrigin'] = '0 50% 0';
+            styleObj[item + 'Transform'] = styleObj[item + 'Transform'] + ' translateX(320px) rotateY(180deg)';
+          });
+        }
+      }else{//如果图片激活，但没有present，则该图片为img-sec里的居中图片，图片退场
+        ['','Webkit','Moz','ms','O'].forEach((item) => {
+          styleObj[item + 'TransformOrigin'] = '50% 50% 0';
+          styleObj[item + 'Transform'] = 'scale(0.01) rotateZ(180deg)';
+          styleObj.opacity = 0;
+        });
+      }
+    }
+
+
 
     return (
-      <figure className = 'img-figure' onClick = {this.handleClick} style = {styleObj}>
+      <figure className = {figureClassName} onClick = {this.handleClick} onMouseEnter = {this.handleMouseEnter} onMouseLeave = {this.handleMouseLeave} style = {styleObj}>
         <img src={this.props.data.imageURL}
              alt={this.props.data.title}/>
         <figcaption>
@@ -159,6 +197,8 @@ class AppComponent extends React.Component {
           rotate: 0, //旋转角
           isInverse: false, //是否翻转
           isCenter: false //是否居中
+          isActive: false //是否激活
+
         }*/
       ]
     };
@@ -208,7 +248,8 @@ class AppComponent extends React.Component {
           },
           rotate: Math.random() > 0.5 ? Math.round(Math.random()*30) : Math.round(Math.random()*-30),
           isInverse: false,
-          isCenter: false
+          isCenter: false,
+          isActive: false
         })
       }
     }
@@ -223,7 +264,8 @@ class AppComponent extends React.Component {
         },
         rotate: Math.random() > 0.5 ? Math.round(Math.random()*30) : Math.round(Math.random()*-30),
         isInverse: false,
-        isCenter: false
+        isCenter: false,
+        isActive: false
       })
     }
 
@@ -236,7 +278,8 @@ class AppComponent extends React.Component {
         },
         rotate: Math.random() > 0.5 ? Math.round(Math.random()*30) : Math.round(Math.random()*-30),
         isInverse: false,
-        isCenter: false
+        isCenter: false,
+        isActive: false
       })
     }
 
@@ -250,7 +293,8 @@ class AppComponent extends React.Component {
       pos: this.centerPos,
       rotate: 0,
       isInverse: false,
-      isCenter:true
+      isCenter:true,
+      isActive: false
     });
 
     /*更新state*/
@@ -282,6 +326,34 @@ class AppComponent extends React.Component {
     return () => {
       this.rearrange(centerIndex);
     };
+  }
+
+/*激活图片
+* @params index 需要激活图片的index
+*/
+  active(index){
+
+    return () => {
+      this.state.imgsInfo[index].isActive = true;
+      this.setState({
+        imgsInfo: this.state.imgsInfo
+      })
+    }
+  }
+
+  /*取消激活图片
+   * @params index 需要取消激活图片的index
+   */
+  cancelActive(index){
+
+    return () => {
+      this.state.imgsInfo[index].isActive = false;
+      this.state.imgsInfo[index].isInverse = false;
+
+      this.setState({
+        imgsInfo: this.state.imgsInfo
+      })
+    }
   }
 
 
@@ -328,7 +400,9 @@ class AppComponent extends React.Component {
   render() {
 
     let controllerUnits = [],
-        imageFigures = [];
+        imageFigures = [],
+        activeFigure = undefined;
+
 
     imagesData.forEach((item, index) => {
 
@@ -340,8 +414,23 @@ class AppComponent extends React.Component {
           },
           rotate: 0,
           isInverse: false,
-          isCenter: false
+          isCenter: false,
+          isActive: false
         }
+      }
+
+      if(this.state.imgsInfo[index].isActive){
+        activeFigure = <ImageFigure
+            key = {100}
+            present = {true}
+            info = {this.state.imgsInfo[index]}
+            data = {item}
+            inverse = {this.inverse(index)}
+            rearrange = {this.rearrangeOut(index)}
+            active = {this.active(index)}
+            cancelActive = {this.cancelActive(index)}
+            ref = {(imageFigure) => {this.imageFigures[index] = imageFigure}}
+          />
       }
 
       imageFigures.push(<ImageFigure
@@ -350,6 +439,8 @@ class AppComponent extends React.Component {
         data = {item}
         inverse = {this.inverse(index)}
         rearrange = {this.rearrangeOut(index)}
+        active = {this.active(index)}
+        cancelActive = {this.cancelActive(index)}
         ref = {(imageFigure) => {this.imageFigures[index] = imageFigure}}/>);
 
       controllerUnits.push(<ControllerUnit
@@ -375,6 +466,10 @@ class AppComponent extends React.Component {
         </nav>
         <section className = "img-sec">
           {imageFigures}
+        </section>
+        {activeFigure}
+        <section className = 'title animated hinge'>
+          <h1>点击每张图片或中心图片试试</h1>
         </section>
       </section>
 

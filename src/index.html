@@ -2,15 +2,20 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>React Webpack Template Title</title>
+  <title>My photogallery</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <link href='http://cdn.webfont.youziku.com/webfonts/nomal/102054/46833/593bb866f629d80efca70229.css' rel='stylesheet' type='text/css' />
+  <script type="text/javascript" src="http://cdn.webfont.youziku.com/wwwroot/js/wf/youziku.api.min.js"></script>
+
 </head>
 <body>
   <div id="app">APPLICATION CONTENT</div>
   <script>__REACT_DEVTOOLS_GLOBAL_HOOK__ = parent.__REACT_DEVTOOLS_GLOBAL_HOOK__</script>
   <script type="text/javascript" src="/assets/app.js"></script>
+  <script type="text/javascript">
+    $youziku.load(".title", "1201bfa3cd544f4fb32e3699a1c8df7d", "HeitiSC");
+    $youziku.draw();
+  </script>
 </body>
 </html>

@@ -149,10 +149,8 @@ class ControllerUnit extends React.Component{
       e.stopPropagation();
       e.preventDefault();
 
-      if(this.props.info.isCenter){//如果对应的图片居中，则翻转
-        this.props.inverse();
-      }else{
-        this.props.rearrange();//如果对应的图片不居中，则将对应的图片居中，其他图片重新排布
+      if(!this.props.info.isCenter){//如果对应的图片不居中，则将对应的图片居中，其他图片重新排布
+        this.props.rearrange();
       }
     }
 
@@ -312,9 +310,13 @@ class AppComponent extends React.Component {
   inverse(index){
 
     return () => {
-      this.state.imgsInfo[index].isInverse = !this.state.imgsInfo[index].isInverse;
-      this.setState({
-        imgsInfo: this.state.imgsInfo
+
+      this.setState((preState) => {
+          preState.imgsInfo[index].isInverse = !preState.imgsInfo[index].isInverse;
+          return {
+            imgsInfo: preState.imgsInfo
+          }
+
       });
     }
   }
@@ -334,9 +336,11 @@ class AppComponent extends React.Component {
   active(index){
 
     return () => {
-      this.state.imgsInfo[index].isActive = true;
-      this.setState({
-        imgsInfo: this.state.imgsInfo
+      this.setState((preState) => {
+        preState.imgsInfo[index].isActive = true;
+        return{
+          imgsInfo: preState.imgsInfo
+        }
       })
     }
   }
@@ -347,11 +351,13 @@ class AppComponent extends React.Component {
   cancelActive(index){
 
     return () => {
-      this.state.imgsInfo[index].isActive = false;
-      this.state.imgsInfo[index].isInverse = false;
+      this.setState((preState) => {
+        preState.imgsInfo[index].isActive = false;
+        preState.imgsInfo[index].isInverse = false;
+        return {
+          imgsInfo: preState.imgsInfo
+        }
 
-      this.setState({
-        imgsInfo: this.state.imgsInfo
       })
     }
   }
@@ -468,8 +474,8 @@ class AppComponent extends React.Component {
           {imageFigures}
         </section>
         {activeFigure}
-        <section className = 'title animated hinge'>
-          <h1>点击每张图片或中心图片试试</h1>
+        <section className = 'title-box animated hinge'>
+          <h1 className = 'title'>点击每张图片或中心图片试试</h1>
         </section>
       </section>
 
